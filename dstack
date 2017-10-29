@@ -1,0 +1,110 @@
+#! /bin/bash
+
+# Possible names:
+#   top: ptop dtop topd
+#   bot: pbot dbot botd
+#   save: psave dsave saved
+#   rest: prest drest restd
+#
+# My concideration is to use the last one: [CMD]d, as that one matches the
+# builtin stack commands popd and pushd.
+#
+# topd, botd, and restd mut be functions in the current shell scope since we
+# are manipulating the current working directory.
+#
+# saved must also be defined in the current scope to get the output of dirs,
+# but there may be an issue with creating the store file if IFS needs to be
+# maanipulated.
+#
+# The safest way to restore the dirstack is with a file that replays the stack
+# operations:
+#   cd N
+#   pushd N-1
+#   ...
+#   pushd 0
+
+# Move directory stack entry to the top of the stack.
+topd ()
+{
+    # One and only one operand.
+    if [[ ${#} != 1 ]]
+    then
+        printf 'incorrect number of operands\n' >&2
+        return 1
+    fi
+
+    # The operand must be in the form of '[+-]N'
+    if [[ ${1} =~ ^[+-][[:digit:]]+$ ]]
+    then
+        # Process.
+        # Get number
+        number=${1:1}
+        if pushd "${1}" > /dev/null
+        then
+            # forward
+            if [[ ${1} =~ ^\+ ]]
+            then
+                for (( pass = number; pass >= 1; pass-- ))
+                do
+                    pushd -0 > /dev/null
+                    pushd > /dev/null
+                done
+                dirs
+            else
+                for (( pass = number; pass >= 1; pass-- ))
+                do
+                    pushd > /dev/null
+                    pushd +1 > /dev/null
+                done
+                dirs
+            fi
+        else
+            return
+        fi
+    else
+        printf 'bad operand\n' >&2
+        return 1
+    fi
+    return
+}
+
+# Move the directory stack entry to the botom.
+# Just use topd; pushd +1, add a little error checking and we're done.
+botd ()
+{
+    # One and only one operand.
+    if [[ ${#} != 1 ]]
+    then
+        printf 'incorrect number of operands\n' >&2
+        return 1
+    fi
+
+    # The operand must be in the form of '[+-]N'
+    if [[ ${1} =~ ^[+-][[:digit:]]+$ ]]
+    then
+        if topd "${1}" > /dev/null
+        then
+            pushd +1
+        else
+            return 1
+        fi
+    else
+        printf 'bad operand\n' >&2
+        return 1
+    fi
+    return
+}
+
+saved ()
+{
+    mampfile dirstack < <( dirs -v )
+    ds_line="${dirstack[-1]}"
+    for (( ind = -1 ; ind >= 0 - ${#dirstack[@]} ; ind-- ))
+    do
+        if [[ ${ds_line} =~ ^[[:space:]]*[[:digit:]]+[[:space:]] ]]
+        then
+            :
+        fi
+    done
+
+}
