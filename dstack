@@ -6,7 +6,7 @@
 #   save: psave dsave saved
 #   rest: prest drest restd
 #
-# My concideration is to use the last one: [CMD]d, as that one matches the
+# My opinion is to use the last one: [CMD]d, as that one matches the
 # builtin stack commands popd and pushd.
 #
 # topd, botd, and restd mut be functions in the current shell scope since we
@@ -14,7 +14,7 @@
 #
 # saved must also be defined in the current scope to get the output of dirs,
 # but there may be an issue with creating the store file if IFS needs to be
-# maanipulated.
+# manipulated.
 #
 # The safest way to restore the dirstack is with a file that replays the stack
 # operations:
@@ -26,72 +26,81 @@
 # Move directory stack entry to the top of the stack.
 topd ()
 {
+    local newtop
+    local dirsreturn
+
     # One and only one operand.
     if [[ ${#} != 1 ]]
     then
-        printf 'incorrect number of operands\n' >&2
+        # ${func_name} is a global variable set from botd() so that topd takes
+        # care of all error checking.
+        printf '%s: %s: incorrect number of operands\n' \
+            "${0##*/}" "${func_name:-${FUNCNAME[0]}}" >&2
         return 1
     fi
 
-    # The operand must be in the form of '[+-]N'
-    if [[ ${1} =~ ^[+-][[:digit:]]+$ ]]
+    # Use the dirs command to check the input,
+    # error codes:
+    #   1, index out of bounds
+    #   2. invalid input
+    # Suppress dirs error messages as we are going to use our own later.
+    if newtop="$( dirs -l "${1}" 2> /dev/null )"
     then
-        # Process.
-        # Get number
-        number=${1:1}
-        if pushd "${1}" > /dev/null
+        # Check to see if the dirstack entry is am existing directory.
+        if [[ -d "${newtop}" ]]
         then
-            # forward
-            if [[ ${1} =~ ^\+ ]]
-            then
-                for (( pass = number; pass >= 1; pass-- ))
-                do
-                    pushd -0 > /dev/null
-                    pushd > /dev/null
-                done
-                dirs
-            else
-                for (( pass = number; pass >= 1; pass-- ))
-                do
-                    pushd > /dev/null
-                    pushd +1 > /dev/null
-                done
-                dirs
-            fi
+            popd "${1}" > /dev/null
+            pushd "${newtop}"
         else
-            return
+            printf '%s: %s: %s: No such file or directory\n' \
+                "${0##*/}" "${func_name:-${FUNCNAME[0]}}" "${newtop}" >&2
+            return 3
         fi
     else
-        printf 'bad operand\n' >&2
-        return 1
+        # Use our own exit messages for the dirs command return code.
+        dirsreturn="${?}"
+        case "${dirsreturn}" in
+            1)
+                printf '%s: %s: %s: directory stack index out of range\n' \
+                    "${0##*/}" "${func_name:-${FUNCNAME[0]}}" "${1:1}" >&2
+                return 1
+                ;;
+            2)
+                printf '%s: %s: %s: invalid option\n' \
+                    "${0##*/}" "${func_name:-${FUNCNAME[0]}}" "${1}" >&2
+                return 2
+                ;;
+            *)
+                printf '%s: %s: unknown error\n' \
+                    "${0##*/}" "${func_name:-${FUNCNAME[0]}}" >&2
+                return "${dirsreturn}"
+                ;;
+        esac
     fi
     return
 }
 
-# Move the directory stack entry to the botom.
-# Just use topd; pushd +1, add a little error checking and we're done.
+# Move the directory stack entry to the bottom.
+# Just use topd; pushd +1.
 botd ()
 {
-    # One and only one operand.
-    if [[ ${#} != 1 ]]
+
+    # This allows us to override the function name used by error messages from
+    # topd.
+    declare -g func_name="${FUNCNAME[0]}"
+
+    if topd "${*}" > /dev/null
     then
-        printf 'incorrect number of operands\n' >&2
-        return 1
+        pushd +1
+    else
+        # This passes on the error code from topd.
+        topderror="${?}"
+        # unset func_name so topd will use the correct function name.
+        unset -v func_name
+        return "${topderror}"
     fi
 
-    # The operand must be in the form of '[+-]N'
-    if [[ ${1} =~ ^[+-][[:digit:]]+$ ]]
-    then
-        if topd "${1}" > /dev/null
-        then
-            pushd +1
-        else
-            return 1
-        fi
-    else
-        printf 'bad operand\n' >&2
-        return 1
-    fi
+    unset -v func_name
     return
 }
 
