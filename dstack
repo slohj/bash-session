@@ -104,15 +104,17 @@ botd ()
     return
 }
 
+# Saves the directory stack as sourceable script that recreates the stack.
 saved ()
 {
     # Where do we save the stack?
-    # We are going to use a hidden file in the useres home directory named
+    # We are going to use a hidden file in the user's home directory named
     # .bash_dstack[_TITLE] if the prompt and term title has been set with the
     # global variable ${title}.
     ds_file="${HOME}/.bash_dstack${title:+_${title}}"
 
-    printf "cd \'%s\'\n" "${DIRSTACK[-1]}" > "${ds_file}"
+    printf "dirs -c\n" > "${ds_file}"
+    printf "cd \'%s\'\n" "${DIRSTACK[-1]}" >> "${ds_file}"
 
     for (( ind = -2 ; ind >= 0 - ${#DIRSTACK[@]} ; ind-- ))
     do
@@ -123,3 +125,13 @@ saved ()
     printf "dirs\n" >> "${ds_file}"
 
 }
+
+# Restore the directory stack.
+restd ()
+{
+
+    ds_file="${HOME}/.bash_dstack${title:+_${title}}"
+
+    . "${ds_file}"
+}
+
