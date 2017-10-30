@@ -29,7 +29,9 @@ topd ()
     local newtop
     local dirsreturn
 
-    # One and only one operand.
+    # One and only one operand.  Just because the dirstack commands will
+    # accept multiple valid indexes and only use the last one, that's no reason
+    # for us to.
     if [[ ${#} != 1 ]]
     then
         # ${func_name} is a global variable set from botd() so that topd takes
@@ -44,40 +46,44 @@ topd ()
     #   1, index out of bounds
     #   2. invalid input
     # Suppress dirs error messages as we are going to use our own later.
-    if newtop="$( dirs -l "${1}" 2> /dev/null )"
+    newtop="$( dirs -l "${1}" 2> /dev/null )"
+    dirsreturn="${?}"
+
+    # Check to make sure the new target directory actually exists.
+    if [[ ! -d "${newtop}" ]]
     then
-        # Check to see if the dirstack entry is am existing directory.
-        if [[ -d "${newtop}" ]]
-        then
+        dirsreturn="3"
+    fi
+
+    # Make sure the operand is an index specifier.
+    if [[ ! ${1} =~ ^[+-][[:digit:]]+$ ]]
+    then
+        dirsreturn="2"
+    fi
+
+    case "${dirsreturn}" in
+        0)
             popd "${1}" > /dev/null
             pushd "${newtop}"
-        else
+            ;;
+        1)
+            printf '%s: %s: %s: directory stack index out of range\n' \
+                "${0##*/}" "${func_name:-${FUNCNAME[0]}}" "${1:1}" >&2
+            ;;
+        2)
+            printf '%s: %s: %s: invalid option\n' \
+                "${0##*/}" "${func_name:-${FUNCNAME[0]}}" "${1}" >&2
+            ;;
+        3)
             printf '%s: %s: %s: No such file or directory\n' \
                 "${0##*/}" "${func_name:-${FUNCNAME[0]}}" "${newtop}" >&2
-            return 3
-        fi
-    else
-        # Use our own exit messages for the dirs command return code.
-        dirsreturn="${?}"
-        case "${dirsreturn}" in
-            1)
-                printf '%s: %s: %s: directory stack index out of range\n' \
-                    "${0##*/}" "${func_name:-${FUNCNAME[0]}}" "${1:1}" >&2
-                return 1
-                ;;
-            2)
-                printf '%s: %s: %s: invalid option\n' \
-                    "${0##*/}" "${func_name:-${FUNCNAME[0]}}" "${1}" >&2
-                return 2
-                ;;
-            *)
-                printf '%s: %s: unknown error\n' \
-                    "${0##*/}" "${func_name:-${FUNCNAME[0]}}" >&2
-                return "${dirsreturn}"
-                ;;
-        esac
-    fi
-    return
+            ;;
+        *)
+            printf '%s: %s: unknown error\n' \
+                "${0##*/}" "${func_name:-${FUNCNAME[0]}}" >&2
+            ;;
+    esac
+    return "${dirsreturn}"
 }
 
 # Move the directory stack entry to the bottom.
