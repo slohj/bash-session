@@ -84,6 +84,7 @@ topd ()
 # Just use topd; pushd +1.
 botd ()
 {
+    local topderror
 
     # This allows us to override the function name used by error messages from
     # topd.
@@ -107,6 +108,9 @@ botd ()
 # Saves the directory stack as sourceable script that recreates the stack.
 saved ()
 {
+    local ds_file
+    local ind
+
     # Where do we save the stack?
     # We are going to use a hidden file in the user's home directory named
     # .bash_dstack[_TITLE] if the prompt and term title has been set with the
@@ -130,6 +134,7 @@ saved ()
 restd ()
 {
 
+    local ds_file
     ds_file="${HOME}/.bash_dstack${title:+_${title}}"
 
     . "${ds_file}"
