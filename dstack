@@ -129,6 +129,7 @@ saved ()
     do
         # This is stack index 0, bash currently does not properly expand
         # the ~ in the array.
+        #printf "pushd -n %q > /dev/null\n" "${DIRSTACK[${ind}]}" \
         printf "pushd -n %q > /dev/null\n" "${DIRSTACK[${ind}]/#\~/${HOME}}" \
             >> "${ds_file}"
     done
