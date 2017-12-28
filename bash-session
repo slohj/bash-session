@@ -1,27 +1,21 @@
 #! /bin/bash
 
-# Possible names:
-#   top: ptop dtop topd
-#   bot: pbot dbot botd
-#   save: psave dsave saved
-#   rest: prest drest restd
-#
-# My opinion is to use the last one: [CMD]d, as that one matches the
-# builtin stack commands popd and pushd.
-#
-# topd, botd, and restd mut be functions in the current shell scope since we
-# are manipulating the current working directory.
-#
-# saved must also be defined in the current scope to get the output of dirs,
-# but there may be an issue with creating the store file if IFS needs to be
-# manipulated.
-#
-# The safest way to restore the dirstack is with a file that replays the stack
-# operations:
-#   cd N
-#   pushd N-1
-#   ...
-#   pushd 0
+# bash-session
+# bash session management functions.
+
+# Copyright (C) 2017 Stephen L Jones <sljones@slohj.org>
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Move directory stack entry to the top of the stack.
 topd ()
@@ -147,3 +141,5 @@ restd ()
     . "${ds_file}"
 }
 
+# Vim mode line {{{1
+# vim: expandtab softtabstop=4 shiftwidth=4 filetype=sh:
