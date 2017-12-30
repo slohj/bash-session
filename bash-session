@@ -34,6 +34,7 @@
 #   functions and aliases.
 #
 
+# Public functions
 
 # Print the dirstack to stdout in a reusabe format.
 printd ()
@@ -50,6 +51,8 @@ printd ()
         printf "pushd -n %q > /dev/null\n" "${DIRSTACK[${ind}]/#\~/${HOME}}"
     done
 }
+
+# Private functions
 
 # This function is used by PROMPT_COMMAND to set both the command line prompt
 # and the xterm title.
