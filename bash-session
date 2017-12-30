@@ -35,30 +35,20 @@
 #
 
 
-# Saves the directory stack as sourceable script that recreates the stack.
-saved ()
+# Print the dirstack to stdout in a reusabe format.
+printd ()
 {
-    local ds_file
     local ind
-
-    # Where do we save the stack?
-    # We are going to use a hidden file in the user's home directory named
-    # .bash_dstack[_TITLE] if the prompt and term title has been set with the
-    # global variable ${title}.
-    ds_file="${HOME}/.bash_dstack${title:+_${title}}"
-
-    printf "dirs -c\n" > "${ds_file}"
 
     for (( ind = -1 ; ind >= 0 - ${#DIRSTACK[@]} ; ind-- ))
     do
-        # This is stack index 0, bash currently does not properly expand
-        # the ~ in the array.
-        #printf "pushd -n %q > /dev/null\n" "${DIRSTACK[${ind}]}" \
-        printf "pushd -n %q > /dev/null\n" "${DIRSTACK[${ind}]/#\~/${HOME}}" \
-            >> "${ds_file}"
+        # FIXME:
+        # bash currently does not properly expand the ~ in the array.
+        # This has been fixed in bash development but has not been released as
+        # an offical patch yet, so we need to still use the string replacement.
+        #printf "pushd -n %q > /dev/null\n" "${DIRSTACK[${ind}]}"
+        printf "pushd -n %q > /dev/null\n" "${DIRSTACK[${ind}]/#\~/${HOME}}"
     done
-    printf "popd\n" >> "${ds_file}"
-
 }
 
 # Vim mode line {{{1
