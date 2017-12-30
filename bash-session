@@ -34,7 +34,46 @@
 #   functions and aliases.
 #
 
+# Global variables
+declare -g _bs_name
+
 # Public functions
+
+bsess ()
+{
+    # Error check, there should be onle 0 or one parameters.
+    if [[ -n "${2}" ]]
+    then
+        # FIXME:
+        # Error message needed: bad usage!
+        return 1
+    fi
+
+    # Save the current state of nullglob.
+    globsetting="$(shopt -p nullglob)"
+    shopt -s nullglob
+    if [[ -z "${1}" ]]
+    then
+        # Display list of avialable sessions.
+        for file_session in ~/.bash_session_*
+        do
+            session="${file_session#.bash_session_}"
+            printf 'Existing sessions:\n'
+            printf '\t%s\n' "${session}"
+        done
+    else
+        if [[ -f "~/.bash_session_${1}" ]]
+        then
+            . "~/.bash_session_${1}" 
+        else
+            # FIXME:
+            # Error message needed: file not found!
+            return 2
+        fi
+    fi
+    # Restore the original state of nullglob.
+    ${globsetting}
+}
 
 # Print the dirstack to stdout in a reusabe format.
 printd ()
