@@ -58,12 +58,12 @@ printd ()
 # and the xterm title.
 _bs_set_stitle ()
 {
-    if [[ -n ${_bs_title} ]]
+    if [[ -n ${_bs_name} ]]
     then
-        stitle="${_bs_title} "
+        stitle="${_bs_name} "
         if [[ -v DISPLAY ]]
         then
-            echo -ne "\033]0;${_bs_title}\007"
+            echo -ne "\033]0;${_bs_name}\007"
         fi
     else
         stitle=""
