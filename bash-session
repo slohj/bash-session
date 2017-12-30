@@ -39,6 +39,8 @@ declare -g _bs_name
 
 # Public functions
 
+# Display current session name and/or saved session names or set the current
+# session name, loading the session if it already had been saved.
 bsess ()
 {
     # Error check, there should be onle 0 or one parameters.
@@ -49,30 +51,36 @@ bsess ()
         return 1
     fi
 
-    # Save the current state of nullglob.
-    globsetting="$(shopt -p nullglob)"
-    shopt -s nullglob
     if [[ -z "${1}" ]]
     then
+        # Print the current session if it has already been set.
+        if [[ -n "${_bs_name}" ]]
+        then
+            printf 'Current session: %s\n\n' "${_bs_name}"
+        fi
+
+        # Save the current state of nullglob.
+        globsetting="$(shopt -p nullglob)"
+        shopt -s nullglob
+
         # Display list of avialable sessions.
         for file_session in ~/.bash_session_*
         do
             session="${file_session#.bash_session_}"
-            printf 'Existing sessions:\n'
+            printf 'Saved sessions:\n'
             printf '\t%s\n' "${session}"
         done
+
+        # Restore the original state of nullglob.
+        ${globsetting}
     else
-        if [[ -f "~/.bash_session_${1}" ]]
+        _bs_name="${1}"
+        # Source the session file if it exists.
+        if [[ -f "~/.bash_session_${_bs_name}" ]]
         then
-            . "~/.bash_session_${1}" 
-        else
-            # FIXME:
-            # Error message needed: file not found!
-            return 2
+            . "~/.bash_session_${_bs_name}"
         fi
     fi
-    # Restore the original state of nullglob.
-    ${globsetting}
 }
 
 # Print the dirstack to stdout in a reusabe format.
