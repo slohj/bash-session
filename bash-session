@@ -51,5 +51,21 @@ printd ()
     done
 }
 
+# This function is used by PROMPT_COMMAND to set both the command line prompt
+# and the xterm title.
+_bs_set_stitle ()
+{
+    if [[ -n ${_bs_title} ]]
+    then
+        stitle="${_bs_title} "
+        if [[ -v DISPLAY ]]
+        then
+            echo -ne "\033]0;${_bs_title}\007"
+        fi
+    else
+        stitle=""
+    fi
+}
+
 # Vim mode line {{{1
 # vim: expandtab softtabstop=4 shiftwidth=4 filetype=sh:
