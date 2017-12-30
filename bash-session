@@ -35,94 +35,6 @@
 #
 
 
-# Move directory stack entry to the top of the stack.
-topd ()
-{
-    local newtop
-    local dirsreturn
-
-    # One and only one operand.  Just because the dirstack commands will
-    # accept multiple valid indexes and only use the last one, that's no reason
-    # for us to.
-    if [[ ${#} != 1 ]]
-    then
-        # ${func_name} is a global variable set from botd() so that topd takes
-        # care of all error checking.
-        printf '%s: %s: incorrect number of operands\n' \
-            "${0##*/}" "${func_name:-${FUNCNAME[0]}}" >&2
-        return 1
-    fi
-
-    # Use the dirs command to check the input,
-    # error codes:
-    #   1, index out of bounds
-    #   2. invalid input
-    # Suppress dirs error messages as we are going to use our own later.
-    newtop="$( dirs -l "${1}" 2> /dev/null )"
-    dirsreturn="${?}"
-
-    # Check to make sure the new target directory actually exists.
-    if [[ ! -d "${newtop}" ]]
-    then
-        dirsreturn="3"
-    fi
-
-    # Make sure the operand is an index specifier.
-    if [[ ! ${1} =~ ^[+-][[:digit:]]+$ ]]
-    then
-        dirsreturn="2"
-    fi
-
-    case "${dirsreturn}" in
-        0)
-            popd "${1}" > /dev/null
-            pushd "${newtop}"
-            ;;
-        1)
-            printf '%s: %s: %s: directory stack index out of range\n' \
-                "${0##*/}" "${func_name:-${FUNCNAME[0]}}" "${1:1}" >&2
-            ;;
-        2)
-            printf '%s: %s: %s: invalid option\n' \
-                "${0##*/}" "${func_name:-${FUNCNAME[0]}}" "${1}" >&2
-            ;;
-        3)
-            printf '%s: %s: %s: No such file or directory\n' \
-                "${0##*/}" "${func_name:-${FUNCNAME[0]}}" "${newtop}" >&2
-            ;;
-        *)
-            printf '%s: %s: unknown error\n' \
-                "${0##*/}" "${func_name:-${FUNCNAME[0]}}" >&2
-            ;;
-    esac
-    return "${dirsreturn}"
-}
-
-# Move the directory stack entry to the bottom.
-# Just use topd; pushd +1.
-botd ()
-{
-    local topderror
-
-    # This allows us to override the function name used by error messages from
-    # topd.
-    declare -g func_name="${FUNCNAME[0]}"
-
-    if topd "${*}" > /dev/null
-    then
-        pushd +1
-    else
-        # This passes on the error code from topd.
-        topderror="${?}"
-        # unset func_name so topd will use the correct function name.
-        unset -v func_name
-        return "${topderror}"
-    fi
-
-    unset -v func_name
-    return
-}
-
 # Saves the directory stack as sourceable script that recreates the stack.
 saved ()
 {
@@ -147,16 +59,6 @@ saved ()
     done
     printf "popd\n" >> "${ds_file}"
 
-}
-
-# Restore the directory stack.
-restd ()
-{
-
-    local ds_file
-    ds_file="${HOME}/.bash_dstack${title:+_${title}}"
-
-    . "${ds_file}"
 }
 
 # Vim mode line {{{1
