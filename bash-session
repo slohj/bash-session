@@ -127,6 +127,30 @@ bsess ()
     fi
 }
 
+# Write out the session information do disk.
+bsave ()
+{
+    declare -l sess_file
+    if [[ -v _bs_name ]]
+    then
+        ses_file="~/.bash_session_${_bs_name}"
+    else
+        sess_file="session_test"
+    fi
+
+    # Initialize the session file.
+    printf "#! /bin/bash\n\n" > "${sess_file}"
+    printf "# bash session file %s\n\n" "${sess_file}" >> "${sess_file}"
+
+    # Save the directory stack.
+    # This should always be last in the session file since it changes the
+    # current working directory.
+    printf "# Directory stack.\n" >> "${sess_file}"
+    printf "dirs -c\n" >> "${sess_file}"
+    printd  >> "${sess_file}"
+    printf "popd\n" >> "${sess_file}"
+}
+
 # Print the dirstack to stdout in a reusable format.
 printd ()
 {
