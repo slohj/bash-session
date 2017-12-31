@@ -59,10 +59,10 @@ bsess ()
         shopt -s nullglob
 
         # Display list of available sessions.
+        printf 'Saved sessions:\n'
         for file_session in ${HOME}/.bash_session_*
         do
-            session="${file_session#.bash_session_}"
-            printf 'Saved sessions:\n'
+            session="${file_session#*.bash_session_}"
             printf '\t%s\n' "${session}"
         done
 
@@ -126,7 +126,7 @@ bsave ()
     printf "\n# Directory stack.\n" >> "${sess_file}"
     printf "dirs -c\n" >> "${sess_file}"
     printd  >> "${sess_file}"
-    printf "popd\n" >> "${sess_file}"
+    printf "popd > /dev/null\n" >> "${sess_file}"
 
     printf "\n# source the extra file\n" >> "${sess_file}"
     printf "if [[ -f %s ]]\nthen\n" "${sess_file}_extra" >> "${sess_file}"
