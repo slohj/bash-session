@@ -59,7 +59,7 @@ bsess ()
         shopt -s nullglob
 
         # Display list of available sessions.
-        for file_session in ~/.bash_session_*
+        for file_session in ${HOME}/.bash_session_*
         do
             session="${file_session#.bash_session_}"
             printf 'Saved sessions:\n'
@@ -71,9 +71,9 @@ bsess ()
     else
         _bs_name="${1}"
         # Source the session file if it exists.
-        if [[ -f "~/.bash_session_${_bs_name}" ]]
+        if [[ -f "${HOME}/.bash_session_${_bs_name}" ]]
         then
-            . "~/.bash_session_${_bs_name}"
+            . "${HOME}/.bash_session_${_bs_name}"
         fi
     fi
 }
@@ -84,7 +84,7 @@ bsave ()
     declare sess_file
     if [[ -v _bs_name ]]
     then
-        ses_file="~/.bash_session_${_bs_name}"
+        sess_file="${HOME}/.bash_session_${_bs_name}"
     else
         sess_file="session_test"
     fi
