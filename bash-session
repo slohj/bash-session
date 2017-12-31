@@ -19,20 +19,64 @@
 
 # TODO:
 #
-# ! Move session title stuff here.
-#   Prompt string ???
-#
 # ! save and set session dependent histories.
 #
-# ! set directory stack on session start.
-#
 # ! Use trap EXIT to save all session info.
-#
-# ! history stuff.
 #
 # * Look into overloading the builtin help to provide help information for user
 #   functions and aliases.
 #
+# ? what about readline stuff?
+#
+# ? Provide a way for the user to save other variables.
+#
+# Bash variables to be saved:
+#   BASH_LOADABLES_PATH
+#   BASH_TRACEFD
+#   CDPATH
+#   CHILD_MAX
+#   EDITOR
+#   EXECIGNORE
+#   FCEDIT
+#   FIGNORE
+#   FUNCNEST
+#   GLOGIGNORE
+#   HISTCONTROL
+#   HISTFILE
+#   HISTFILESIZE
+#   HISTIGNORE
+#   HISTSIZE
+#   HISTTIMEFORMAT
+#   HOSTFILE
+#   IGNOREEOF
+#   INPUTRC
+#   LANG
+#   LC_ALL
+#   LC_COLLATE
+#   LC_CTYPE
+#   LC_MESSAGES
+#   LC_NUMERIC
+#   LC_TIME
+#   MAIL
+#   MAILCHECK
+#   MAILPATH
+#   PATH
+#   POSIXLY_CORRECT * While this will not affect bash it does affect most other GNU tools.
+#   PS0
+#   PS1
+#   PS2
+#   PS4
+#   TIMEFORMAT
+#   TMOUT
+#   TMPDIR
+#   histchars
+#
+# The above variables do not need to be exported to change bash's behavior.
+#
+# Include a colon seperated list of other variables that the user may want to
+# save that is not in the above list.  Also provide a list of variable that
+# must be unset.  If the variables are set then not only are the actions
+# implied saved, but the variables also.
 
 # Global variables
 declare -g _bs_name
