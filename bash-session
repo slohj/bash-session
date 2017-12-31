@@ -140,12 +140,39 @@ bsave ()
 
     # Initialize the session file.
     printf "#! /bin/bash\n\n" > "${sess_file}"
-    printf "# bash session file %s\n\n" "${sess_file}" >> "${sess_file}"
+    printf "# bash session file %s\n" "${sess_file}" >> "${sess_file}"
+
+    # Set the list of default variables to be saved.
+    declare def_vars
+    def_vars="BASH_LOADABLES_PATH:BASH_TRACEFD:CDPATH:CHILD_MAX:EDITOR"
+    def_vars+=":EXECIGNORE:FCEDIT:FIGNORE:FUNCNEST:GLOGIGNORE:HISTCONTROL"
+    def_vars+=":HISTFILE:HISTFILESIZE:HISTIGNORE:HISTSIZE:HISTTIMEFORMAT"
+    def_vars+=":HOSTFILE:IGNOREEOF:INPUTRC:LANG:LC_ALL:LC_COLLATE"
+    def_vars+=":LC_CTYPE:LC_MESSAGES:LC_NUMERIC:LC_TIME:MAIL:MAILCHECK"
+    def_vars+=":MAILPATH:PATH:POSIXLY_CORRECT:PS0:PS1:PS2:PS4:TIMEFORMAT"
+    def_vars+=":TMOUT:TMPDIR:histchars"
+
+    printf "\n# Setting default variables.\n" >> "${sess_file}"
+    _bs_vars_set "${def_vars}" >> "${sess_file}"
+
+    # Build the list of default variables to be unset
+    declare def_unset
+    declare tmp_list="${def_vars}:"
+    while [[ -n "${tmp_list}" ]]
+    do
+        if [[ ! -v "${tmp_list%%:*}" ]]
+        then
+            def_unset+="${tmp_list%%:*}:"
+        fi
+        tmp_list="${tmp_list#*:}"
+    done
+    printf "\n# Unset default variables.\n" >> "${sess_file}"
+    _bs_vars_unset "${def_unset%:}" "v" >> "${sess_file}"
 
     # Save the directory stack.
     # This should always be last in the session file since it changes the
     # current working directory.
-    printf "# Directory stack.\n" >> "${sess_file}"
+    printf "\n# Directory stack.\n" >> "${sess_file}"
     printf "dirs -c\n" >> "${sess_file}"
     printd  >> "${sess_file}"
     printf "popd\n" >> "${sess_file}"
