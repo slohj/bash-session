@@ -73,7 +73,7 @@
 #
 # The above variables do not need to be exported to change bash's behavior.
 #
-# Include a colon seperated list of other variables that the user may want to
+# Include a colon separated list of other variables that the user may want to
 # save that is not in the above list.  Also provide a list of variable that
 # must be unset.  If the variables are set then not only are the actions
 # implied saved, but the variables also.
