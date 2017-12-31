@@ -74,6 +74,8 @@ bsess ()
         if [[ -f "${HOME}/.bash_session_${_bs_name}" ]]
         then
             . "${HOME}/.bash_session_${_bs_name}"
+        else
+            HISTFILE="${HOME}/.bash_history_${_bs_name}"
         fi
     fi
 }
