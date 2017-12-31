@@ -190,11 +190,14 @@ _bs_set_stitle ()
 _bs_vars_set ()
 {
     declare parselist
+
     if [[ -z "${1}" ]]
     then
         return 1
     fi
+
     parselist="${1}:"
+
     while [[ -n "${parselist}" ]]
     do
         if [[ -v "${parselist%%:*}" ]]
@@ -205,23 +208,29 @@ _bs_vars_set ()
     done
 }
 
-# Split out a colon separated list of variables printing out the declare
-# invocation to stdout.
+# Split out a colon separated list of variables printing the command to unset
+# the variable to stdout.
+# ${2} should be v for variable, f for function, or n for nameref, if not given
+# defaults to v.
 _bs_vars_unset ()
 {
     declare parselist
     declare opt
+
     if [[ -z "${1}" ]]
     then
         return 1
     fi
+
     if [[ -n "${2}" ]]
     then
         opt="-${2}"
     else
         opt="-v"
     fi
+
     parselist="${1}:"
+
     while [[ -n "${parselist}" ]]
     do
         printf "unset %s %s\n" "${opt}" "${parselist%%:*}"
