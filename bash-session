@@ -174,6 +174,10 @@ bsave ()
     printf "dirs -c\n" >> "${sess_file}"
     printd  >> "${sess_file}"
     printf "popd\n" >> "${sess_file}"
+
+    printf "\n# source the extra file\n" >> "${sess_file}"
+    printf "if [[ -f %s ]]\nthen\n" "${sess_file}_extra" >> "${sess_file}"
+    printf "    . %s\nfi\n" "${sess_file}_extra" >> "${sess_file}"
 }
 
 # Print the dirstack to stdout in a reusable format.
