@@ -167,11 +167,9 @@ bsave ()
         tmp_list="${tmp_list#*:}"
     done
     printf "\n# Unset default variables.\n" >> "${sess_file}"
-    _bs_vars_unset "${def_unset%:}" "v" >> "${sess_file}"
+    _bs_vars_unset "${def_unset%:}" >> "${sess_file}"
 
     # Save the directory stack.
-    # This should always be last in the session file since it changes the
-    # current working directory.
     printf "\n# Directory stack.\n" >> "${sess_file}"
     printf "dirs -c\n" >> "${sess_file}"
     printd  >> "${sess_file}"
@@ -237,30 +235,20 @@ _bs_vars_set ()
 
 # Split out a colon separated list of variables printing the command to unset
 # the variable to stdout.
-# ${2} should be v for variable, f for function, or n for nameref, if not given
-# defaults to v.
 _bs_vars_unset ()
 {
     declare parselist
-    declare opt
 
     if [[ -z "${1}" ]]
     then
         return 1
     fi
 
-    if [[ -n "${2}" ]]
-    then
-        opt="-${2}"
-    else
-        opt="-v"
-    fi
-
     parselist="${1}:"
 
     while [[ -n "${parselist}" ]]
     do
-        printf "unset %s %s\n" "${opt}" "${parselist%%:*}"
+        printf "unset -v %s\n" "${parselist%%:*}"
         parselist=${parselist#*:}
     done
 }
