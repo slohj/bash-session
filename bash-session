@@ -130,7 +130,7 @@ bsess ()
 # Write out the session information do disk.
 bsave ()
 {
-    declare -l sess_file
+    declare sess_file
     if [[ -v _bs_name ]]
     then
         ses_file="~/.bash_session_${_bs_name}"
@@ -183,6 +183,50 @@ _bs_set_stitle ()
     else
         stitle=""
     fi
+}
+
+# Split out a colon separated list of variables printing out the declare
+# invocation to stdout.
+_bs_vars_set ()
+{
+    declare parselist
+    if [[ -z "${1}" ]]
+    then
+        return 1
+    fi
+    parselist="${1}:"
+    while [[ -n "${parselist}" ]]
+    do
+        if [[ -v "${parselist%%:*}" ]]
+        then
+            declare -p "${parselist%%:*}"
+        fi
+        parselist=${parselist#*:}
+    done
+}
+
+# Split out a colon separated list of variables printing out the declare
+# invocation to stdout.
+_bs_vars_unset ()
+{
+    declare parselist
+    declare opt
+    if [[ -z "${1}" ]]
+    then
+        return 1
+    fi
+    if [[ -n "${2}" ]]
+    then
+        opt="-${2}"
+    else
+        opt="-v"
+    fi
+    parselist="${1}:"
+    while [[ -n "${parselist}" ]]
+    do
+        printf "unset %s %s\n" "${opt}" "${parselist%%:*}"
+        parselist=${parselist#*:}
+    done
 }
 
 # Execute on load commands
