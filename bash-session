@@ -3,7 +3,7 @@
 # bash-session
 # bash session management functions.
 
-# Copyright (C) 2017 Stephen L Jones <sljones@slohj.org>
+# Copyright (C) 2017,2018 Stephen L Jones <sljones@slohj.org>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
