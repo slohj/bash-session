@@ -88,15 +88,22 @@ bsess ()
             else
                 HISTFILE="${HOME}/.bash_history_${_bs_name}"
                 # Set PROMPT_COMMAND
-                if [[ -v PROMPT_COMMAND ]]
+                # This test could be just done much easier if switching from
+                # one session to another existing session was disallowed, the
+                # copying case needs more work.
+                if [[ "${PROMPT_COMMAND}" =~ _bs_set_stitle ]]
                 then
-                    # The user is already using PROMPT_COMMAND for something else, so just turn
-                    # it into a compound command.
-                    PROMPT_COMMAND="${PROMPT_COMMAND}; _bs_set_stitle"
+                    :
                 else
-                    PROMPT_COMMAND="_bs_set_stitle"
+                    if [[ -v PROMPT_COMMAND ]]
+                    then
+                        # The user is already using PROMPT_COMMAND for something else, so just turn
+                        # it into a compound command.
+                        PROMPT_COMMAND="${PROMPT_COMMAND}; _bs_set_stitle"
+                    else
+                        PROMPT_COMMAND="_bs_set_stitle"
+                    fi
                 fi
-
             fi
         else
             # TODO
@@ -133,8 +140,8 @@ bsave ()
     def_vars+=":HISTFILE:HISTFILESIZE:HISTIGNORE:HISTSIZE:HISTTIMEFORMAT"
     def_vars+=":HOSTFILE:IGNOREEOF:INPUTRC:LANG:LC_ALL:LC_COLLATE"
     def_vars+=":LC_CTYPE:LC_MESSAGES:LC_NUMERIC:LC_TIME:MAIL:MAILCHECK"
-    def_vars+=":MAILPATH:PATH:POSIXLY_CORRECT:PS0:PS1:PS2:PS4:TIMEFORMAT"
-    def_vars+=":TMOUT:TMPDIR:histchars"
+    def_vars+=":MAILPATH:PATH:POSIXLY_CORRECT:PROMPT_COMMAND:PS0:PS1:PS2:PS4"
+    def_vars+=":TIMEFORMAT:TMOUT:TMPDIR:histchars"
 
     printf "\n# Setting default variables.\n" >> "${sess_file}"
     _bs_vars_set "${def_vars}" >> "${sess_file}"
