@@ -19,7 +19,10 @@
 
 # TODO:
 #
-# ! save and set session dependent histories.
+# ! set session dependent histories.
+# ! shopt nad set -o stuff
+# ! turn off the session with $ bsess ""
+# ! move PROMPT_COMMAND to bsess()
 #
 # ! Use trap EXIT to save all session info.
 #
