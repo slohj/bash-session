@@ -31,6 +31,37 @@
 #
 # ? what about readline stuff?
 #
+# bsess state actions:
+# < Emplimented as functions >
+#   help output
+#   info output
+#   load existing session
+#   create new session
+#   copy existing session to new session
+# Error states ( incorrect usage )
+#   too many operands
+#   changing from one existing session to another existing session
+#
+# Usage patterns:
+#   0 operands
+#       help output
+#       info output
+#   1 operand
+#       -z _bs_name
+#           session $1 does not exist
+#               create new session
+#           session $1 exists
+#               load existing session
+#       -n _bs_name
+#           session $1 does not exist
+#               copy session
+#           session $1 exists
+#               help output
+#               return error
+#   > 1 operands
+#       help output
+#       return error
+#
 
 # Global variables
 declare -g _bs_name
