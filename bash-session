@@ -33,34 +33,48 @@
 #
 # bsess state actions:
 # < Emplimented as functions >
-#   help output
-#   info output
-#   load existing session
-#   create new session
-#   copy existing session to new session
+#   F1 help output
+#   F2 info output
+#   F3 load existing session
+#   F4 create new session
+#   F5 copy existing session to new session
 # Error states ( incorrect usage )
-#   too many operands
-#   changing from one existing session to another existing session
+#   E1 too many operands
+#   E2 changing from one existing session to another existing session
 #
 # Usage patterns:
 #   0 operands
-#       help output
-#       info output
+#       F1 help output
+#       F2 info output
 #   1 operand
 #       -z _bs_name
 #           session $1 does not exist
-#               create new session
+#               F4 create new session
 #           session $1 exists
-#               load existing session
+#               F3 load existing session
 #       -n _bs_name
 #           session $1 does not exist
-#               copy session
-#           session $1 exists
-#               help output
+#               F5 copy session
+#           E2 session $1 exists
+#               F1 help output
 #               return error
-#   > 1 operands
-#       help output
+#   > 1 operands E1
+#       F1 help output
 #       return error
+#
+# Possible option processing:
+#   -h
+#       F1 help
+#   0 operands
+#   -l
+#       F2 info
+#   -c $1 $2
+#       F5 copy $1 -> $2
+#   -c $1
+#       F5 copy current -> $1
+#           if no current create and save
+#   $1
+#       F3 load if exist or F4 create and change
 #
 
 # Global variables
