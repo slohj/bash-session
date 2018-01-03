@@ -217,11 +217,6 @@ bsave ()
     printf "\n# Restore aliases.\n" >> "${sess_file}"
     alias -p >> "${sess_file}"
 
-    # Load session history.
-    printf "\n# Load history file.\n" >> "${sess_file}"
-    printf "history -c\n" >> "${sess_file}"
-    printf "history -r\n" >> "${sess_file}"
-
     # Save the directory stack.
     printf "\n# Directory stack.\n" >> "${sess_file}"
     printf "dirs -c\n" >> "${sess_file}"
@@ -231,6 +226,14 @@ bsave ()
     printf "\n# source the extra file\n" >> "${sess_file}"
     printf "if [[ -f %s ]]\nthen\n" "${sess_file}_extra" >> "${sess_file}"
     printf "    . %s\nfi\n" "${sess_file}_extra" >> "${sess_file}"
+
+    # Load session history.
+    # This is last becase the history will pick up the remaining lins in this
+    # sourced file.
+    # Both commands are on one line to keep the history read command out of the
+    # history.
+    printf "\n# Load history file.\n" >> "${sess_file}"
+    printf "history -c; history -r\n" >> "${sess_file}"
 }
 
 # Print the dirstack to stdout in a reusable format.
