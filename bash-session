@@ -125,6 +125,7 @@ bsess ()
             # disallow changing from the current session to an existing one and
             # only allow creation of a new session, i.e. copying to a new
             # session.
+            trap bsave EXIT
             _bs_name="${1}"
             # Source the session file if it exists.
             if [[ -f "${HOME}/.bash_session_${_bs_name}" ]]
