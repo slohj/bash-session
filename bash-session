@@ -166,7 +166,7 @@ bsess ()
 # Write out the session information do disk.
 bsave ()
 {
-    declare sess_file
+    local sess_file
     if [[ -v _bs_name ]]
     then
         sess_file="${HOME}/.bash_session_${_bs_name}"
@@ -179,7 +179,7 @@ bsave ()
     printf "# bash session file %s\n" "${sess_file}" >> "${sess_file}"
 
     # Set the list of default variables to be saved.
-    declare def_vars
+    local def_vars
     def_vars="BASH_LOADABLES_PATH:BASH_TRACEFD:CDPATH:CHILD_MAX:EDITOR"
     def_vars+=":EXECIGNORE:FCEDIT:FIGNORE:FUNCNEST:GLOGIGNORE:HISTCONTROL"
     def_vars+=":HISTFILE:HISTFILESIZE:HISTIGNORE:HISTSIZE:HISTTIMEFORMAT"
@@ -192,8 +192,8 @@ bsave ()
     _bs_vars_set "${def_vars}" >> "${sess_file}"
 
     # Build the list of default variables to be unset
-    declare def_unset
-    declare tmp_list="${def_vars}:"
+    local def_unset
+    local tmp_list="${def_vars}:"
     while [[ -n "${tmp_list}" ]]
     do
         if [[ ! -v "${tmp_list%%:*}" ]]
@@ -254,7 +254,7 @@ _bs_set_stitle ()
 # invocation to stdout.
 _bs_vars_set ()
 {
-    declare parselist
+    local parselist
 
     if [[ -z "${1}" ]]
     then
@@ -277,7 +277,7 @@ _bs_vars_set ()
 # the variable to stdout.
 _bs_vars_unset ()
 {
-    declare parselist
+    local parselist
 
     if [[ -z "${1}" ]]
     then
