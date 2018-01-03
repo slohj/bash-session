@@ -17,6 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# NOTES:
+#
+# External commands used:
+#   cp
+#
+
 # TODO:
 #
 # ! set session dependent histories.
@@ -314,6 +320,29 @@ _bs_vars_unset ()
         printf "unset -v %s\n" "${parselist%%:*}"
         parselist=${parselist#*:}
     done
+}
+
+# _bs_copy_session ( SOURCE_NAME DEST_NAME )
+_bs_copy_session ()
+{
+    if (( ${#} != 2 ))
+    then
+        return 1
+    fi
+
+    if [[ -f "${HOME}/.bash_history_${1}" ]]
+    then
+        cp "${HOME}/.bash_history_${1}" "${HOME}/.bash_history_${2}"
+    fi
+    if [[ -f "${HOME}/.bash_session_${1}" ]]
+    then
+        cp "${HOME}/.bash_session_${1}" "${HOME}/.bash_session_${2}"
+    fi
+    if [[ -f "${HOME}/.bash_session_${1}_extra" ]]
+    then
+        cp "${HOME}/.bash_session_${1}_extra" "${HOME}/.bash_session_${2}_extra"
+    fi
+
 }
 
 # Execute on load commands
