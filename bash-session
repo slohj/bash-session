@@ -272,6 +272,7 @@ _bs_set_stitle ()
 _bs_vars_set ()
 {
     local parselist
+    local var_string
 
     if [[ -z "${1}" ]]
     then
@@ -284,7 +285,8 @@ _bs_vars_set ()
     do
         if [[ -v "${parselist%%:*}" ]]
         then
-            declare -p "${parselist%%:*}"
+            var_string=$(declare -p "${parselist%%:*}")
+            printf "%s\n" "${var_string/declare/declare -g}"
         fi
         parselist=${parselist#*:}
     done
