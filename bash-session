@@ -205,6 +205,23 @@ bsave ()
     printf "\n# Unset default variables.\n" >> "${sess_file}"
     _bs_vars_unset "${def_unset%:}" >> "${sess_file}"
 
+    # Save the set -o options.
+    printf "\n# Restore set -o options.\n" >> "${sess_file}"
+    shopt -o -p  >> "${sess_file}"
+
+    # Save set shopt settings.
+    printf "\n# Restore shopt options.\n" >> "${sess_file}"
+    shopt -p  >> "${sess_file}"
+
+    # Save aliases.
+    printf "\n# Restore aliases.\n" >> "${sess_file}"
+    alias -p >> "${sess_file}"
+
+    # Load session history.
+    printf "\n# Load history file.\n" >> "${sess_file}"
+    printf "history -c\n" >> "${sess_file}"
+    printf "history -r\n" >> "${sess_file}"
+
     # Save the directory stack.
     printf "\n# Directory stack.\n" >> "${sess_file}"
     printf "dirs -c\n" >> "${sess_file}"
