@@ -1,0 +1,20 @@
+Explanation of git branches, or how I use them:
+
+dev:
+	This branch is where all experimentation occurs.  Do NOT ever deploy
+code in this branch.  It is not even expected to parse correctly.  This branch
+may even be deleted and recreated on occasion.  You are warned.
+
+testing:
+	This branch is what I normally have deployed.  It is not gaurenteed to
+be bug free or all code useful, but it should work.
+
+master:
+	This branch is for code from testing that is working as expected.  If
+this branch is newer than testing, the diff should only be in comments and
+documentation.  This branch should always be safe for production use.
+
+tags:
+	Most tags will be for my own information.  Release tags will be labeled
+as Release N, with N being an alwasy increasing interger.
+
