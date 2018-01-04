@@ -6,7 +6,7 @@ code in this branch.  It is not even expected to parse correctly.  This branch
 may even be deleted and recreated on occasion.  You are warned.
 
 testing:
-	This branch is what I normally have deployed.  It is not gaurenteed to
+	This branch is what I normally have deployed.  It is not guaranteed to
 be bug free or all code useful, but it should work.
 
 master:
@@ -16,5 +16,5 @@ documentation.  This branch should always be safe for production use.
 
 tags:
 	Most tags will be for my own information.  Release tags will be labeled
-as Release N, with N being an alwasy increasing interger.
+as Release N, with N being an always increasing integer.
 
