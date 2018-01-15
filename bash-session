@@ -110,8 +110,11 @@ bsess ()
         printf 'Saved sessions:\n'
         for file_session in ${HOME}/.bash_session_*
         do
-            session="${file_session#*.bash_session_}"
-            printf '\t%s\n' "${session}"
+            if [[ ! ${file_session} =~ _extra$ ]]
+            then
+                session="${file_session#*.bash_session_}"
+                printf '\t%s\n' "${session}"
+            fi
         done
 
         # Restore the original state of nullglob.
